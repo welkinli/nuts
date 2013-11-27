@@ -1,0 +1,77 @@
+10
+
+dir
+189097
+https://tc-svn.tencent.com/isd/isd_qzoneplatformdev_rep/QzoneMobileFramework_proj/trunk/application/server/eservice_lite64/wns_acc
+https://tc-svn.tencent.com/isd/isd_qzoneplatformdev_rep
+
+
+
+2013-10-29T04:05:24.591253Z
+188609
+brusepeng
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+df2599cb-4e79-6a4a-84f3-a1dd8b66c2e7
+
+include
+dir
+
+conf
+dir
+
+lib
+dir
+
+src
+dir
+
+bin
+dir
+
+Makefile
+file
+
+
+
+
+2013-11-01T02:39:25.355671Z
+4bb06ffeb8d65a41a3edddff3103624e
+2013-06-05T07:07:44.819102Z
+172715
+brusepeng
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+238
+

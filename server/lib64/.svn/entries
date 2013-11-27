@@ -1,0 +1,67 @@
+10
+
+dir
+189097
+https://tc-svn.tencent.com/isd/isd_qzoneplatformdev_rep/QzoneMobileFramework_proj/trunk/application/server/eservice_lite64/lib64
+https://tc-svn.tencent.com/isd/isd_qzoneplatformdev_rep
+
+
+
+2013-10-25T09:22:02.749533Z
+188389
+starsun
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+df2599cb-4e79-6a4a-84f3-a1dd8b66c2e7
+
+dcapi
+dir
+
+l5
+dir
+
+misclib
+dir
+
+vaskey
+dir
+
+fileconfig
+dir
+
+jemalloc
+dir
+
+sac
+dir
+
+qmfproto
+dir
+
+qmfproto_app
+dir
+
+libevent
+dir
+
+pdu
+dir
+
+tea
+dir
+
+elib
+dir
+

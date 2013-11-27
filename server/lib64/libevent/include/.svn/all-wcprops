@@ -1,0 +1,35 @@
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/isd/isd_qzoneplatformdev_rep/!svn/ver/172715/QzoneMobileFramework_proj/trunk/application/server/eservice_lite64/lib64/libevent/include
+END
+evhttp.h
+K 25
+svn:wc:ra_dav:version-url
+V 144
+/isd/isd_qzoneplatformdev_rep/!svn/ver/172715/QzoneMobileFramework_proj/trunk/application/server/eservice_lite64/lib64/libevent/include/evhttp.h
+END
+evdns.h
+K 25
+svn:wc:ra_dav:version-url
+V 143
+/isd/isd_qzoneplatformdev_rep/!svn/ver/172715/QzoneMobileFramework_proj/trunk/application/server/eservice_lite64/lib64/libevent/include/evdns.h
+END
+evrpc.h
+K 25
+svn:wc:ra_dav:version-url
+V 143
+/isd/isd_qzoneplatformdev_rep/!svn/ver/172715/QzoneMobileFramework_proj/trunk/application/server/eservice_lite64/lib64/libevent/include/evrpc.h
+END
+event.h
+K 25
+svn:wc:ra_dav:version-url
+V 143
+/isd/isd_qzoneplatformdev_rep/!svn/ver/172715/QzoneMobileFramework_proj/trunk/application/server/eservice_lite64/lib64/libevent/include/event.h
+END
+evutil.h
+K 25
+svn:wc:ra_dav:version-url
+V 144
+/isd/isd_qzoneplatformdev_rep/!svn/ver/172715/QzoneMobileFramework_proj/trunk/application/server/eservice_lite64/lib64/libevent/include/evutil.h
+END

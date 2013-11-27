@@ -1,0 +1,23 @@
+K 25
+svn:wc:ra_dav:version-url
+V 122
+/isd/isd_qzoneplatformdev_rep/!svn/ver/172715/QzoneMobileFramework_proj/trunk/application/server/eservice_lite64/frame/bin
+END
+prepare_env.sh
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/isd/isd_qzoneplatformdev_rep/!svn/ver/172715/QzoneMobileFramework_proj/trunk/application/server/eservice_lite64/frame/bin/prepare_env.sh
+END
+start.sh
+K 25
+svn:wc:ra_dav:version-url
+V 131
+/isd/isd_qzoneplatformdev_rep/!svn/ver/172715/QzoneMobileFramework_proj/trunk/application/server/eservice_lite64/frame/bin/start.sh
+END
+stop.sh
+K 25
+svn:wc:ra_dav:version-url
+V 130
+/isd/isd_qzoneplatformdev_rep/!svn/ver/172715/QzoneMobileFramework_proj/trunk/application/server/eservice_lite64/frame/bin/stop.sh
+END

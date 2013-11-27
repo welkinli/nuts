@@ -1,0 +1,41 @@
+K 25
+svn:wc:ra_dav:version-url
+V 126
+/isd/isd_qzoneplatformdev_rep/!svn/ver/172715/QzoneMobileFramework_proj/trunk/application/server/eservice_lite64/lib64/misclib
+END
+misc_com.h
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/isd/isd_qzoneplatformdev_rep/!svn/ver/172715/QzoneMobileFramework_proj/trunk/application/server/eservice_lite64/lib64/misclib/misc_com.h
+END
+misc_cfg.h
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/isd/isd_qzoneplatformdev_rep/!svn/ver/172715/QzoneMobileFramework_proj/trunk/application/server/eservice_lite64/lib64/misclib/misc_cfg.h
+END
+misc_str.c
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/isd/isd_qzoneplatformdev_rep/!svn/ver/172715/QzoneMobileFramework_proj/trunk/application/server/eservice_lite64/lib64/misclib/misc_str.c
+END
+misc_str.h
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/isd/isd_qzoneplatformdev_rep/!svn/ver/172715/QzoneMobileFramework_proj/trunk/application/server/eservice_lite64/lib64/misclib/misc_str.h
+END
+misc_cfg.c
+K 25
+svn:wc:ra_dav:version-url
+V 137
+/isd/isd_qzoneplatformdev_rep/!svn/ver/172715/QzoneMobileFramework_proj/trunk/application/server/eservice_lite64/lib64/misclib/misc_cfg.c
+END
+Makefile
+K 25
+svn:wc:ra_dav:version-url
+V 135
+/isd/isd_qzoneplatformdev_rep/!svn/ver/172715/QzoneMobileFramework_proj/trunk/application/server/eservice_lite64/lib64/misclib/Makefile
+END
