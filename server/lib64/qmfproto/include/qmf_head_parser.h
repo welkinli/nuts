@@ -57,7 +57,7 @@ namespace QMF_PROTOCAL
             {
             	uint32_t *sign_ptr = NULL;
 			
-                if (reqbufflen < 28) return err_qmf_head_illegal;
+                if (reqbufflen < 39) return err_qmf_head_illegal;
 
                 sign_ptr = (uint32_t *)reqbuff;
                 if (*sign_ptr != STX_SIGN_INT) return err_qmf_head_stx;
@@ -70,40 +70,49 @@ namespace QMF_PROTOCAL
 
                 head.Ver = reqbuff[pos++];
 
-                head.Enc = reqbuff[pos++];
+                //head.Enc = reqbuff[pos++];
 
-                head.Flag = ntohl(*(uint32_t*)(reqbuff + pos));
-                pos += 4;
+                //head.Flag = ntohl(*(uint32_t*)(reqbuff + pos));
+                //pos += 4;
 
-                head.Appid = ntohl(*(uint32_t*) (reqbuff + pos));
+                head.Cmd = ntohl(*(uint32_t*) (reqbuff + pos));
                 pos += 4;
 
                 head.Uin = ntohll(*(uint64_t*) (reqbuff + pos));
                 pos += 8;
 
-                uint16_t b2len = ntohs(*(uint16_t*) (reqbuff + pos));
+                head.Key = ntohll(*(uint64_t*) (reqbuff + pos));
+                pos += 8;
+
+                head.seq = ntohl(*(uint32_t*) (reqbuff + pos));
+                pos += 4;
+
+                head.ReserveFlag = ntohl(*(uint32_t*) (reqbuff + pos));
                 pos += 2;
 
-                if (b2len + pos > reqbufflen) return err_qmf_head_b2len;
-                if (b2len > 0) {
-                    head.B2.assign(reqbuff + pos, b2len);
-                } else {
-                    head.B2.clear();
-                }
-                pos += b2len;
+               //uint16_t b2len = ntohs(*(uint16_t*) (reqbuff + pos));
+                //pos += 2;
 
-                // ver=2 第二版本新增字段
-                if (head.Ver >= 2)
-                {
-                    head.ComprLen = ntohl(*(uint32_t*) (reqbuff + pos));
-                    pos += 4;
+//                if (b2len + pos > reqbufflen) return err_qmf_head_b2len;
+//                if (b2len > 0) {
+//                    head.B2.assign(reqbuff + pos, b2len);
+//                } else {
+//                    head.B2.clear();
+//                }
+//                pos += b2len;
 
-                    if (head.Ver >= 3)
-                    {
-                        head.seq = ntohl(*(uint32_t*) (reqbuff + pos));
-                        pos += 4;
-                    }
-                }
+//                // ver=2 第二版本新增字段
+//                if (head.Ver >= 2)
+//                {
+//                    head.ComprLen = ntohl(*(uint32_t*) (reqbuff + pos));
+//                    pos += 4;
+//
+//                    if (head.Ver >= 3)
+//                    {
+//                        head.seq = ntohl(*(uint32_t*) (reqbuff + pos));
+//                        pos += 4;
+//                    }
+//                }
 
                 head.HeadLen = pos;
                 head.BodyLen = head.Len - pos;
@@ -121,7 +130,7 @@ namespace QMF_PROTOCAL
 
                 int pos = 0;
                 //begin
-                *(uint32_t*)(outbuff) = STX_SIGN_INT;
+                *(uint32_t*)(outbuff) = WNS_SIGN_INT;
                 pos += 4;
                 //len
                 *(uint32_t*)(outbuff + pos) = htonl(head.HeadLen + busilen);
@@ -129,36 +138,43 @@ namespace QMF_PROTOCAL
                 //qmfver
                 outbuff[pos++] = head.Ver;
                 //enc
-                outbuff[pos++] = head.Enc;
+                //outbuff[pos++] = head.Enc;
                 //flag
-                *(uint32_t*)(outbuff + pos) = htonl(head.Flag);
-                pos += 4;
+//                *(uint32_t*)(outbuff + pos) = htonl(head.Flag);
+//                pos += 4;
                 //appid
-                *(uint32_t*)(outbuff + pos) = htonl(head.Appid);
+                *(uint32_t*)(outbuff + pos) = htonl(head.Cmd);
                 pos += 4;
                 //uin
                 *(uint64_t*)(outbuff + pos) = htonll(head.Uin);
                 pos += 8;
-                //b2len
-                *(uint16_t*)(outbuff + pos) = htons(head.B2.size());
+                //Key
+                *(uint64_t*)(outbuff + pos) = htonll(head.Key);
+                pos += 8;
+                *(uint64_t*)(outbuff + pos) = htonll(head.seq);
+                pos += 4;
+                *(uint64_t*)(outbuff + pos) = htonll(head.ReserveFlag);
                 pos += 2;
-                if (head.B2.size() > 0) {
-                    //b2
-                    memcpy(outbuff+pos, head.B2.c_str(), head.B2.size());
-                    pos += head.B2.size();
-                }
-                //ver>=2 comprlen
-                if (head.Ver >= 2)
-                {
-                    *(uint32_t*) (outbuff + pos) = htonl(head.ComprLen);
-                    pos += 4;
-
-                    if (head.Ver >= 3)
-                    {
-                        *(uint32_t*) (outbuff + pos) = htonl(head.seq);
-                        pos += 4;
-                    }
-                }
+//                //b2len
+//                *(uint16_t*)(outbuff + pos) = htons(head.B2.size());
+//                pos += 2;
+//                if (head.B2.size() > 0) {
+//                    //b2
+//                    memcpy(outbuff+pos, head.B2.c_str(), head.B2.size());
+//                    pos += head.B2.size();
+//                }
+//                //ver>=2 comprlen
+//                if (head.Ver >= 2)
+//                {
+//                    *(uint32_t*) (outbuff + pos) = htonl(head.ComprLen);
+//                    pos += 4;
+//
+//                    if (head.Ver >= 3)
+//                    {
+//                        *(uint32_t*) (outbuff + pos) = htonl(head.seq);
+//                        pos += 4;
+//                    }
+//                }
                 head.HeadLen = pos;
                 head.BodyLen = busilen;
                 if (busibuff) memcpy(outbuff+pos, busibuff, busilen);
@@ -175,7 +191,8 @@ namespace QMF_PROTOCAL
              */
             int GetQmfHeadLen(QMF_PROTOCAL::QmfHead &head)
             {
-            	int len = 0;
+            	return 39;
+            	/*int len = 0;
 				
                 if (head.Ver >= 2)
                 {
@@ -193,6 +210,7 @@ namespace QMF_PROTOCAL
                 // ver=1 for default
                 //wns_sign+len+ver+enc+flag+appid+uin+b2len+b2
                 return 4+4+1+1+4+4+8+2+head.B2.size();
+                */
             }
 
 

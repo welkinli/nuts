@@ -13,8 +13,8 @@
 #define QMF_HEAD_STX 0x02
 #define QMF_ACC_HEAD_SOH 0x01
 
-#define	WNS_SIGN_STR	"wns\0"
-#define	WNS_SIGN_INT	0x736e77
+#define	WNS_SIGN_STR	"nut\0"
+#define	WNS_SIGN_INT	0x74756e
 
 namespace QMF_PROTOCAL
 {
@@ -26,14 +26,18 @@ namespace QMF_PROTOCAL
             uint32_t Wns_sign;
             uint32_t    Len;//包体总长度
             uint8_t     Ver;//版本
-            uint8_t     Enc;//是否加密
-            uint32_t    Flag;//控制位
-            uint32_t    Appid;
+            //uint8_t     Enc;//是否加密
+            //uint32_t    Flag;//控制位
+            //uint32_t    Appid;
+            uint32_t    Cmd;
             uint64_t    Uin;//uin
-            string      B2;//QMF私有的Token，类似ST
-            uint32_t    ComprLen;//ver>=2，启动压缩时，表示原数据大小
+            uint64_t    Key;//Key
+            //string      B2;//QMF私有的Token，类似ST
+            //uint32_t    ComprLen;//ver>=2，启动压缩时，表示原数据大小
             uint32_t seq;//ver>=3
+            uint16_t  ReserveFlag;
 			/////下面两个是Decode后自动生成的，并非QmfHead本身，为了方便获取到body部分
+
             uint32_t    HeadLen;//头部长度，decode时计算出来
             uint32_t    BodyLen;//body长度，decode时计算出来
             uint8_t     *Body;//body起始，decode时赋值
@@ -44,16 +48,20 @@ namespace QMF_PROTOCAL
                 Wns_sign = WNS_SIGN_INT;
                 Len = 0;
                 Ver = 1;
-                Enc = 0;
-                Appid = 0;
+                //Enc = 0;
+                //Appid = 0;
                 Uin = 0;
-                B2.clear();
+                Key =0 ;
+                Cmd =0 ;
+
+                //B2.clear();
                 HeadLen = 0;
                 BodyLen = 0;
                 Body = NULL;
-                Flag = 0;
-                ComprLen = 0;
+                //Flag = 0;
+                //ComprLen = 0;
 		seq = 0;
+		ReserveFlag=0;
             }
     };
 

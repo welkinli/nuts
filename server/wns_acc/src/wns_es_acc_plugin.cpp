@@ -99,23 +99,23 @@ tsp_timeout_process(wns_acc_task_struct *tsp, void *arg)
     int res = -255;
     uint32_t i, j;
 
-    if (tsp->client_info_p) {
-        struct in_addr the_ip;
-        the_ip.s_addr = htonl(tsp->client_info_p->server_ip);
-
-        wns_acc_update_failed_L5(tsp->client_info_p->qos, 1000000*(g_current_time - tsp->use_time));
-
-        g_warn("=> timeout process: %p, arg: %p, use time: %ld, uin: %u, server ip: %s, seq: %u, cmd: %s clientid=%lu", 
-               tsp, arg, tsp->use_time, 
-               tsp->client_info_p->uin, 
-               inet_ntoa(the_ip), 
-               tsp->client_info_p->seq, 
-               tsp->client_info_p->cmd.c_str(), 
-               tsp->client_id);
-    }
-    else {
-        g_warn("=> timeout process: %p, arg: %p, use time: %ld", tsp, arg, tsp->use_time);
-    }
+//    if (tsp->client_info_p) {
+//        struct in_addr the_ip;
+//        the_ip.s_addr = htonl(tsp->client_info_p->server_ip);
+//
+//        wns_acc_update_failed_L5(tsp->client_info_p->qos, 1000000*(g_current_time - tsp->use_time));
+//
+//        g_warn("=> timeout process: %p, arg: %p, use time: %ld, uin: %u, server ip: %s, seq: %u, cmd: %s clientid=%lu",
+//               tsp, arg, tsp->use_time,
+//               tsp->client_info_p->uin,
+//               inet_ntoa(the_ip),
+//               tsp->client_info_p->seq,
+//               tsp->client_info_p->cmd.c_str(),
+//               tsp->client_id);
+//    }
+//    else {
+//        g_warn("=> timeout process: %p, arg: %p, use time: %ld", tsp, arg, tsp->use_time);
+//    }
 
     if (tsp->client_id > 0) {
         std::map<uint64_t, void *>::iterator the_iter = wns_async_map.find(tsp->client_id);
@@ -128,7 +128,7 @@ tsp_timeout_process(wns_acc_task_struct *tsp, void *arg)
     }
 
     /* clog */
-    wns_acc_logSession(WNS_CODE_ACC_SERVER_TIMEOUT, NULL, NULL, NULL, tsp);
+    //wns_acc_logSession(WNS_CODE_ACC_SERVER_TIMEOUT, NULL, NULL, NULL, tsp);
 
     if (tsp->cmd_can_retry > 0 && g_wns_acc_main_config.client_retry > 0) {
 		wns_make_empty_response(tsp, WNS_CODE_ACC_NEED_RETRY);
@@ -936,9 +936,9 @@ wns_acc_LogUpstreamInfo(eservice_unit_t *eup, QMF_PROTOCAL::QmfHead &qmfhead, QM
 		}
 
 		user_context = (wns_acc_connect_user_context_t *)eservice_user_conn_get_user_data(eup);
-		if (user_context && need_repack) 
+		if (user_context && need_repack)
 		{
-			
+
 			eservice_buf_drain(*ebpp, eservice_buf_datalen(*ebpp));
 			eservice_buf_get_space(*ebpp, qmfhead.BodyLen + WNS_ACC_SAFE_LEN, &ebpp_start, &ebpp_len);
 			/* pack new upstream */
@@ -952,12 +952,12 @@ wns_acc_LogUpstreamInfo(eservice_unit_t *eup, QMF_PROTOCAL::QmfHead &qmfhead, QM
 
 			qmfhead.BodyLen = ebpp_len;
 		}
-		
+
 
         /* reserve data */
         if (tsp && tsp->client_info_p) {
             /* reserve qua */
-            if (up.Qua.size() >= 2) {				/* only clog things HAVE qua */			
+            if (up.Qua.size() >= 2) {				/* only clog things HAVE qua */
                 tsp->client_info_p->qua = up.Qua;
             }
 
@@ -974,7 +974,7 @@ wns_acc_LogUpstreamInfo(eservice_unit_t *eup, QMF_PROTOCAL::QmfHead &qmfhead, QM
                 g_dbg("push rsp need not response");
                 tsp->need_not_rsp = 1;
             }
-        }		
+        }
     }
 
     return 0;
@@ -1298,37 +1298,28 @@ wns_acc_get_push_client(eservice_unit_t *eup, struct eservice_unit_t **eupp, wns
 }
 
 static int
-wns_acc_get_L5(int appid)
+wns_acc_get_L5(int cmd)
 {
     int res = -255;
     std::string errmsg;
 
-    if(appid < 0)
+    if(cmd < 0)
     {
         return -1;
     }
 
-    if (appid == 65538) //空间的L5
-    {
-        qos_dispatch._modid = g_wns_acc_main_config.dest_modid;
-        qos_dispatch._cmd = g_wns_acc_main_config.dest_cmd;
-    }
-    else //接入wns的其他业务
-    {
-        qos_dispatch._modid = g_wns_acc_main_config.other_dest_modid;
-        qos_dispatch._cmd = g_wns_acc_main_config.other_dest_cmd;
-    }
-
-    res = ApiGetRoute(qos_dispatch, 0.01, errmsg);
-    if (res >= 0) {
-        snprintf(qos_dispatch_port_str, sizeof(qos_dispatch_port_str) - 1, "%u", qos_dispatch._host_port);
-    }
-    else {
-        g_warn("mod=%d cmd=%d ApiGetRoute failed ret=%d msg=%s",
-               qos_dispatch._modid, qos_dispatch._cmd, res, errmsg.c_str());
-
-        return -1;
-    }
+    qos_dispatch._host_ip = g_wns_acc_main_config.dest_modid;
+    qos_dispatch._host_port = g_wns_acc_main_config.dest_cmd;
+//    res = ApiGetRoute(qos_dispatch, 0.01, errmsg);
+//    if (res >= 0) {
+//        snprintf(qos_dispatch_port_str, sizeof(qos_dispatch_port_str) - 1, "%u", qos_dispatch._host_port);
+//    }
+//    else {
+//        g_warn("mod=%d cmd=%d ApiGetRoute failed ret=%d msg=%s",
+//               qos_dispatch._modid, qos_dispatch._cmd, res, errmsg.c_str());
+//
+//        return -1;
+//    }
 
     return 0;
 }
@@ -1398,7 +1389,8 @@ wns_make_empty_response(wns_acc_task_struct *tsp, int wns_code)
     _rep_qmf_head.init();
     _rep_qmf_head.Ver = (uint8_t)(tsp->client_info_p->pro_version);
     _rep_qmf_head.Uin = tsp->client_info_p->uin;
-    _rep_qmf_head.Appid = tsp->client_info_p->appid;
+    _rep_qmf_head.Key = tsp->client_info_p->key;
+    //_rep_qmf_head.Appid = tsp->client_info_p->appid;
     _rep_qmf_head.seq = tsp->client_info_p->seq;
     m_protocal_parser.EncodeQmfHead((char *)pkg_buf, &qmfbufflen, _rep_qmf_head, (char *)busi_buf, qmfbodylen);
 
@@ -1562,49 +1554,50 @@ wns_acc_find_proper_dispatch(wns_acc_task_struct *tsp)
     struct eservice_unit_t *dispatch_long_eup = NULL;
     std::map<uint64_t, struct eservice_unit_t *>::iterator it;
 
-    int app_type = -1;
-
-    if (tsp && tsp->client_info_p)
-    {
-        if (wns_acc_get_L5(tsp->client_info_p->appid) < 0)
-            return NULL;
-    }
-    else
-    {
-        g_warn("find disp long con appid fail");
-        return NULL;
-    }
+    int app_type = 0;
+    if (wns_acc_get_L5(tsp->client_info_p->cmd) < 0)
+    	return NULL;
+//    if (tsp && tsp->client_info_p)
+//    {
+//        if (wns_acc_get_L5(tsp->client_info_p->appid) < 0)
+//            return NULL;
+//    }
+//    else
+//    {
+//        g_warn("find disp long con appid fail");
+//        return NULL;
+//    }
 
     /* update tsp server info */
     if (tsp && tsp->client_info_p) {
         tsp->client_info_p->server_ip = ntohl((uint32_t)(inet_addr(qos_dispatch._host_ip.c_str())));
-        if (tsp->client_info_p->appid > 0)
-        {
-            if (tsp->client_info_p->appid == 65538) //QZONE
-            {
-                app_type = 0;
-                g_dbg("Qzone");
-            }
-            else //其他接入WNS的应用
-            {
-                app_type = 1;
-                g_dbg("Other app");
-            }
-        }
+//        if (tsp->client_info_p->appid > 0)
+//        {
+//            if (tsp->client_info_p->appid == 65538) //QZONE
+//            {
+//                app_type = 0;
+//                g_dbg("Qzone");
+//            }
+//            else //其他接入WNS的应用
+//            {
+//                app_type = 1;
+//                g_dbg("Other app");
+//            }
+//        }
     }
 
-    if(app_type < 0)
-    {
-        if (tsp && tsp->client_info_p)
-        {
-           g_warn("get disp long con apptype fail. appid:%d",tsp->client_info_p->appid);
-        }
-
-      // return NULL;
-
-        app_type = 1; //找不到合理的appid 归类到非QZONE 应用
-
-    }
+//    if(app_type < 0)
+//    {
+//        if (tsp && tsp->client_info_p)
+//        {
+//           g_warn("get disp long con apptype fail. appid:%d",tsp->client_info_p->appid);
+//        }
+//
+//      // return NULL;
+//
+//        app_type = 1; //找不到合理的appid 归类到非QZONE 应用
+//
+//    }
 
 
 
@@ -1979,7 +1972,7 @@ wns_acc_process_pkg(eservice_unit_t *eup, wns_acc_task_struct *tsp)
     g_dbg("=> wns_acc_process_pkg(), tsp: %p, input ebp: %p", tsp, tsp->input_ebp);
 
     input_len = eservice_buf_datalen(tsp->input_ebp);
-    eservice_buf_make_linearizes(tsp->input_ebp, input_len);
+    eservice_buf_make_linearizes(tsp->input_ebp, input_len);//格式化到evbuff的一个chunk里面(evbuff可能会由多个chunk链表组成)
 
     g_dbg("Data Come from Client(%s:%d), clientid=%lu, len=%zd", 
           eservice_user_get_peer_addr_str(eup), eservice_user_get_peer_addr_port(eup), tsp->client_id, input_len);
@@ -1997,9 +1990,8 @@ wns_acc_process_pkg(eservice_unit_t *eup, wns_acc_task_struct *tsp)
         return res;
     }
 
-    g_msg("decode QmfHead[len=%d ver=%d enc=%d appid=%d uin=%lu b2len=%zu bodylen=%d flag=%d seq=%d]",
-          _qmf_head.Len, _qmf_head.Ver, _qmf_head.Enc, _qmf_head.Appid, _qmf_head.Uin, 
-          _qmf_head.B2.size(), _qmf_head.BodyLen, _qmf_head.Flag, _qmf_head.seq);
+    g_msg("decode QmfHead[len=%d ver=%d cmd=%d  Key=%lu uin=%lu ,reserveflag=%u, bodylen=%d  seq=%d]",
+          _qmf_head.Len, _qmf_head.Ver, _qmf_head.Cmd, _qmf_head.Key, _qmf_head.Uin,_qmf_head.ReserveFlag, _qmf_head.BodyLen, _qmf_head.seq);
 
     //statisic connection type  tcp http and ping connection
     wns_staticis_connection_and_recived_num(eup, tsp, _qmf_head);
@@ -2011,7 +2003,7 @@ wns_acc_process_pkg(eservice_unit_t *eup, wns_acc_task_struct *tsp)
     }
 
     /**************Check Ping Package*********/
-    if (bit_test((int32_t *)&_qmf_head.Flag, (int)QMF_PROTOCAL::ENUM_QMFHEAD_F_PING)) {
+    if (_qmf_head.Cmd == CMD_PING) {
         g_dbg("receive a ping package.");
 
         if (tsp->protocol_type == 2) {
@@ -2022,7 +2014,7 @@ wns_acc_process_pkg(eservice_unit_t *eup, wns_acc_task_struct *tsp)
             eservice_buf_prepend(tsp->input_ebp, http_fake_header, http_fake_header_len); 
         }
         // 如果是oc点加速过来的,需要加上相应的头
-        if (tsp->client_port != 0) prepend_proxy_header(tsp, tsp->input_ebp);
+        //if (tsp->client_port != 0) prepend_proxy_header(tsp, tsp->input_ebp);
 
         ss_list_push_head_struct(&(tsp->output_ebp_list), eservice_buf_buf2list(tsp->input_ebp));
         tsp->input_ebp = NULL;
@@ -2039,12 +2031,12 @@ wns_acc_process_pkg(eservice_unit_t *eup, wns_acc_task_struct *tsp)
     }
 
     /* check if appid is valid */
-#if 0	
-    if (wns_acc_valid_appid_map.find(_qmf_head.Appid) == wns_acc_valid_appid_map.end()) {
-        g_warn("invalid appid: %d", _qmf_head.Appid);
-        return -1;
-    }
-#endif
+//#if 0
+//    if (wns_acc_valid_appid_map.find(_qmf_head.Appid) == wns_acc_valid_appid_map.end()) {
+//        g_warn("invalid appid: %d", _qmf_head.Appid);
+//        return -1;
+//    }
+//#endif
 
     /**************Build AccHead**************/
 
@@ -2105,56 +2097,71 @@ wns_acc_process_pkg(eservice_unit_t *eup, wns_acc_task_struct *tsp)
     }
 #endif
 
-    res = wns_acc_LogUpstreamInfo(eup, _qmf_head, _acc_head, tsp, &to_dispatch_ebp);
-    if (res < 0) {
-        ESERVICE_DESTROY_EBP(to_dispatch_ebp);
+//   res = wns_acc_LogUpstreamInfo(eup, _qmf_head, _acc_head, tsp, &to_dispatch_ebp);
+//    if (res < 0) {
+//        ESERVICE_DESTROY_EBP(to_dispatch_ebp);
+//
+//        if (tsp->error_code == WNS_CODE_ACC_DECRYPT_INVAID || tsp->error_code == WNS_CODE_ACC_INVALID_SESSIONHASH) {
+//            return wns_pkg_error_data(eup, tsp, m_protocal_parser, _qmf_head, tsp->error_code);
+//        }
+//        else {
+//            return -1;
+//        }
+//    }
+//    else if (res > 0) {
+//        return 0;
+//    }
 
-        if (tsp->error_code == WNS_CODE_ACC_DECRYPT_INVAID || tsp->error_code == WNS_CODE_ACC_INVALID_SESSIONHASH) {
-            return wns_pkg_error_data(eup, tsp, m_protocal_parser, _qmf_head, tsp->error_code);
-        }
-        else {
-            return -1;
-        }
-    }
-    else if (res > 0) {
-        return 0;
-    }
     /******LOG SAC******/
-    if(g_wns_acc_main_config.sac_agent_flag)
-    {
-        res = wns_acc_sacagent_check(eup, &_acc_head, &_qmf_head, tsp);
-        if(res < 0){
-            g_dbg("wns_acc_sacagent_check server failed\n");
-        }
-        else if(res == 0){
-            g_dbg("wns_acc_sacagent_check no limited\n");
-        }
-        else{
-            if (g_wns_acc_main_config.sac_agent_flag == 2){
-                ESERVICE_DESTROY_EBP(to_dispatch_ebp);
-                g_msg("wns_acc_sacagent_check limited %d uin:%u\n", res, tsp->client_info_p->uin);
-                wns_acc_logSession(WNS_CODE_SAC_AGENT, eup, &_acc_head, &_qmf_head, tsp, 1);
-                return wns_pkg_error_data(eup, tsp, m_protocal_parser, _qmf_head, WNS_CODE_SAC_AGENT );
-            }
-            else{
-                g_msg("wns_acc_sacagent_check limited and only log :%u\n", tsp->client_info_p->uin);
-            }
-        }	
+//    if(g_wns_acc_main_config.sac_agent_flag)
+//    {
+//        res = wns_acc_sacagent_check(eup, &_acc_head, &_qmf_head, tsp);
+//        if(res < 0){
+//            g_dbg("wns_acc_sacagent_check server failed\n");
+//        }
+//        else if(res == 0){
+//            g_dbg("wns_acc_sacagent_check no limited\n");
+//        }
+//        else{
+//            if (g_wns_acc_main_config.sac_agent_flag == 2){
+//                ESERVICE_DESTROY_EBP(to_dispatch_ebp);
+//                g_msg("wns_acc_sacagent_check limited %d uin:%u\n", res, tsp->client_info_p->uin);
+//                wns_acc_logSession(WNS_CODE_SAC_AGENT, eup, &_acc_head, &_qmf_head, tsp, 1);
+//                return wns_pkg_error_data(eup, tsp, m_protocal_parser, _qmf_head, WNS_CODE_SAC_AGENT );
+//            }
+//            else{
+//                g_msg("wns_acc_sacagent_check limited and only log :%u\n", tsp->client_info_p->uin);
+//            }
+//        }
+//    }
+
+//#if	0
+//    if ((tsp->client_info_p->uin == 1463818982u || tsp->client_info_p->uin == 2202044200u) && strstr(tsp->client_info_p->cmd.c_str(), "addComment") && tsp->client_info_p->seq % 2 == 1) {
+//        ESERVICE_DESTROY_EBP(to_dispatch_ebp);
+//
+//        res = wns_make_empty_response(tsp, WNS_CODE_ACC_NEED_RETRY);
+//        if (res < 0) {
+//            g_warn("wns_make_empty_response() failed: %d", res);
+//            return -1;
+//        }
+//
+//        return 0;
+//    }
+//#endif
+
+
+    tsp->client_info_p->cmd = (_qmf_head.Cmd);
+    tsp->client_info_p->seq = _qmf_head.seq;
+    tsp->client_info_p->req_size = _qmf_head.Len;
+    tsp->client_info_p->user_ip = ntohl(_acc_head.ClientIP);
+    tsp->client_info_p->pro_version = _qmf_head.Ver;
+    tsp->client_info_p->uin = _qmf_head.Uin;
+    tsp->client_info_p->host_ip = ntohl(eth1_ip);
+
+    if (_qmf_head.Cmd == CMD_PING ) {
+        g_dbg("push rsp need not response");
+        tsp->need_not_rsp = 1;
     }
-
-#if	0
-    if ((tsp->client_info_p->uin == 1463818982u || tsp->client_info_p->uin == 2202044200u) && strstr(tsp->client_info_p->cmd.c_str(), "addComment") && tsp->client_info_p->seq % 2 == 1) {
-        ESERVICE_DESTROY_EBP(to_dispatch_ebp);
-
-        res = wns_make_empty_response(tsp, WNS_CODE_ACC_NEED_RETRY);
-        if (res < 0) {
-            g_warn("wns_make_empty_response() failed: %d", res);
-            return -1;
-        }
-
-        return 0;
-    }
-#endif
 
     //g_dbg("push special ip: %u, port: %u", process_spe_listen_ip, process_spe_listen_port);
     _acc_head.AccIp       = process_spe_listen_ip;
@@ -2163,67 +2170,69 @@ wns_acc_process_pkg(eservice_unit_t *eup, wns_acc_task_struct *tsp)
     _acc_head.AccIp_wan = eservice_user_get_local_addr_network(eup);
     g_dbg("accip_wan = %u", _acc_head.AccIp_wan);
 
-    if (tsp->client_info_p && !strncmp(tsp->client_info_p->cmd.c_str(), "wns.echo", 8)) {	/* echo, clog and return only */
-        g_warn("receive a echo package, size: %zu", eservice_buf_datalen(tsp->input_ebp));
+//    if (tsp->client_info_p && !strncmp(tsp->client_info_p->cmd.c_str(), "wns.echo", 8)) {	/* echo, clog and return only */
+//        g_warn("receive a echo package, size: %zu", eservice_buf_datalen(tsp->input_ebp));
+//
+//        if (tsp->protocol_type == 2) {
+//            char http_length_buffer[MAX_LINE_LEN];
+//            int snlen = snprintf(http_length_buffer, sizeof(http_length_buffer) - 1,
+//                                 "%zd\r\n\r\n", eservice_buf_datalen(tsp->input_ebp));
+//            eservice_buf_prepend(tsp->input_ebp, http_length_buffer, snlen);
+//            eservice_buf_prepend(tsp->input_ebp, http_fake_header, http_fake_header_len);
+//        }
+//        prepend_proxy_header(tsp, tsp->input_ebp);
+//
+//        ss_list_push_head_struct(&(tsp->output_ebp_list), eservice_buf_buf2list(tsp->input_ebp));
+//        tsp->input_ebp = NULL;
+//
+//        wns_acc_logSession(WNS_CODE_SUCC, eup, &_acc_head, &_qmf_head, tsp, 1);
+//
+//        return 0;
+//    }
+    //直接copy evbuffer到 dispath_ebp中 到这里 input_ebp应该没有人在使用勒
 
-        if (tsp->protocol_type == 2) {
-            char http_length_buffer[MAX_LINE_LEN];
-            int snlen = snprintf(http_length_buffer, sizeof(http_length_buffer) - 1, 
-                                 "%zd\r\n\r\n", eservice_buf_datalen(tsp->input_ebp));
-            eservice_buf_prepend(tsp->input_ebp, http_length_buffer, snlen);
-            eservice_buf_prepend(tsp->input_ebp, http_fake_header, http_fake_header_len); 
-        }
-        prepend_proxy_header(tsp, tsp->input_ebp);
-
-        ss_list_push_head_struct(&(tsp->output_ebp_list), eservice_buf_buf2list(tsp->input_ebp));
-        tsp->input_ebp = NULL;
-
-        wns_acc_logSession(WNS_CODE_SUCC, eup, &_acc_head, &_qmf_head, tsp, 1);
-
-        return 0;
-    }
 
     /* preserve connection last qua */
-    if (user_context) {
-        user_context->last_qua = tsp->client_info_p->qua;
-        //eservice_user_conn_set_user_data(eup, user_context);
-    }
+//    if (user_context) {
+//        user_context->last_qua = tsp->client_info_p->qua;
+//        //eservice_user_conn_set_user_data(eup, user_context);
+//    }
 
     //g_dbg("AccHead Len=%d; QmfHead Len=%d", _acc_head_len, _qmf_head.Len);
 
     if (tsp->need_not_rsp == 0)
         wns_30s.req_num++;
-
-#if 0
-    send_len = ntohl(_acc_head.Len);
-    send_ebp = eservice_buf_new(0);
-    if (!send_ebp) {
-        g_warn("eservice_buf_new() failed");
-        return -119;
-    }
-
-    if (eservice_buf_add(send_ebp,  &_acc_head, _acc_head_len) < 0 || eservice_buf_move_data(send_ebp, tsp->input_ebp, -1) < 0) {
-        g_warn("eservice_buf_add() failed: %s", strerror(errno));
-        ESERVICE_DESTROY_EBP(send_ebp);
-        return -1;
-    }
-
-    res = wns_connect_to_dispatch_and_send_data(eup, tsp, send_ebp);
-    if (res < 0) {
-        g_warn("wns_connect_to_dispatch_and_send_data() failed: %d", res);
-        ESERVICE_DESTROY_EBP(send_ebp);
-        return res;
-    }
-#else
-    m_protocal_parser.EncodeQmfHead(new_qmf_head_buf, &new_qmf_head_buf_len, _qmf_head, NULL, _qmf_head.BodyLen);
-    new_qmf_head_buf_len -= _qmf_head.BodyLen;			/* we only need qmf header */
-
-    if (eservice_buf_prepend(to_dispatch_ebp,  new_qmf_head_buf, new_qmf_head_buf_len) < 0) {
-        g_warn("eservice_buf_add() failed: %s", strerror(errno));
-        ESERVICE_DESTROY_EBP(to_dispatch_ebp);
-		wns_acc_logSession(WNS_CODE_ACC_SEND2_DISP_FAILED, eup, NULL, NULL, NULL, 1);
-        return -1;
-    }
+    eservice_buf_move_data(to_dispatch_ebp,tsp->input_ebp);//(to_dispatch_ebp,tsp->input_ebp)
+//#if 0
+//    send_len = ntohl(_acc_head.Len);
+//    send_ebp = eservice_buf_new(0);
+//    if (!send_ebp) {
+//        g_warn("eservice_buf_new() failed");
+//        return -119;
+//    }
+//
+//    if (eservice_buf_add(send_ebp,  &_acc_head, _acc_head_len) < 0 || eservice_buf_move_data(send_ebp, tsp->input_ebp, -1) < 0) {
+//        g_warn("eservice_buf_add() failed: %s", strerror(errno));
+//        ESERVICE_DESTROY_EBP(send_ebp);
+//        return -1;
+//    }
+//
+//    res = wns_connect_to_dispatch_and_send_data(eup, tsp, send_ebp);
+//    if (res < 0) {
+//        g_warn("wns_connect_to_dispatch_and_send_data() failed: %d", res);
+//        ESERVICE_DESTROY_EBP(send_ebp);
+//        return res;
+//    }
+//#else
+//    m_protocal_parser.EncodeQmfHead(new_qmf_head_buf, &new_qmf_head_buf_len, _qmf_head, NULL, _qmf_head.BodyLen);
+//    new_qmf_head_buf_len -= _qmf_head.BodyLen;			/* we only need qmf header */
+//
+//    if (eservice_buf_prepend(to_dispatch_ebp,  new_qmf_head_buf, new_qmf_head_buf_len) < 0) {
+//        g_warn("eservice_buf_add() failed: %s", strerror(errno));
+//        ESERVICE_DESTROY_EBP(to_dispatch_ebp);
+//		wns_acc_logSession(WNS_CODE_ACC_SEND2_DISP_FAILED, eup, NULL, NULL, NULL, 1);
+//        return -1;
+//    }
 
     _acc_head.Len           = htonl(eservice_buf_datalen(to_dispatch_ebp) + _acc_head_len);
     if (eservice_buf_prepend(to_dispatch_ebp,  &_acc_head, _acc_head_len) < 0) {
@@ -2232,7 +2241,6 @@ wns_acc_process_pkg(eservice_unit_t *eup, wns_acc_task_struct *tsp)
 		 wns_acc_logSession(WNS_CODE_ACC_SEND2_DISP_FAILED, eup, NULL, NULL, NULL, 1);
         return -1;
     }
-
     res = wns_connect_to_dispatch_and_send_data(eup, tsp, to_dispatch_ebp);
     if (res < 0) {
         g_warn("wns_connect_to_dispatch_and_send_data() failed: %d", res);
@@ -2566,6 +2574,7 @@ eservice_callback_return_val eservice_cb_data_arrive(struct eservice_manager_t *
             }
 
             res = eservice_user_pop_inbuf(eup, pkg_len, &pkg_data);
+            //move eup中的buf 到 pkg_data中，这样eup中的receive evbuff又是空的了，但是如果处理不及时的话，这里有多个数据包的情况下要考虑处理
             if (res < 0 || !pkg_data) {
                 g_warn("eservice_user_pop_inbuf() failed: %d", res);
 				wns_acc_logSession(WNS_CODE_ACC_SERVER_ERROR_DATA, eup, NULL, NULL, NULL, 1);
@@ -2579,10 +2588,11 @@ eservice_callback_return_val eservice_cb_data_arrive(struct eservice_manager_t *
                 continue;
             }
 
-            tsp->eup = eup;
-            tsp->input_ebp = pkg_data;
+            tsp->eup = eup;    //带有数据包的连接信息
+            tsp->input_ebp = pkg_data;  // 数据包
 
             int idx = eservice_user_eup_to_index(eup);
+            //index 基本等于eservice_unit_t 数组偏移地址
             if (idx < 0)
             {
                 g_warn("eservice_user_eup_to_index() failed, eup=%p", eup);
@@ -2593,8 +2603,8 @@ eservice_callback_return_val eservice_cb_data_arrive(struct eservice_manager_t *
 
             tsp->client_id = make_client_id(idx);
             tsp->protocol_type = 1;
-            tsp->client_ip = client_ip;
-            tsp->client_port = client_port;
+            tsp->client_ip = client_ip;  // 这里的clientip是代理的ip，此处未0
+            tsp->client_port = client_port;  //同上 此处为 0
 
             /* process */
             res = wns_acc_process_pkg(eup, tsp);

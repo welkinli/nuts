@@ -112,6 +112,8 @@ typedef enum {
 	WNS_CODE_OVERLOAD_ACTIVE_CLOSE = 4003,         //server overload active close fd
 
 	WNS_CODE_SAFE_END = 4100,
+
+	CMD_ERROR = 5000,
 }ENUM_WNS_ERRCODE;
 
 #endif /* WNS_ERRCODE_H_ */

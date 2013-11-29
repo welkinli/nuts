@@ -265,7 +265,7 @@ eservice_user_register_tcp_conn(struct eservice_unit_t *already_eup, const char 
 		return NULL;
 	}
 
-	es_assign_frame_log();
+	//es_assign_frame_log();
 	
 	if (already_eup) {
 		es_destroy_tcp_conn(already_eup->sp);
@@ -284,7 +284,7 @@ eservice_user_register_tcp_conn(struct eservice_unit_t *already_eup, const char 
 
 	g_dbg("=> eservice_user_register_tcp_conn(), result eup: %p, result sp: %p, ip: %s, port: %s, reconn ms: %d", sp ? sp->linked_eup : NULL, sp, ip, port, reconn_ms);
 	
-	es_assign_plugin_log();
+	//es_assign_plugin_log();
 	return sp->linked_eup;
 }
 

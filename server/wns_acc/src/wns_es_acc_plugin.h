@@ -48,11 +48,11 @@
 #define	WNS_ACC_TASK_POS_NOLIST	1
 #define	WNS_ACC_TASK_POS_WAITING	2
 
-#define	WNS_SIGN_STR	"wns\0"
-#define	WNS_SIGN_INT	0x736e77
+#define	WNS_SIGN_STR	"nut\0"
+#define	WNS_SIGN_INT	0x74756e//0x736e77
 #define	WNS_INNER_SIGN	0x01
 
-#define	WNS_SIGN_FE_INT	0xa736e77
+#define	WNS_SIGN_FE_INT	 0xa74756e//0xa736e77
 //#define	WNS_FE_PROTOCOL_LEN	4
 #define	WNS_FE_PROTOCOL_LEN	8
 
@@ -74,7 +74,19 @@
 #define get_eup(clientid) (((clientid) >> SOCKID_SHIFT) & SOCKID_MASK)
 
 
+
 #pragma pack(1)
+typedef enum {
+	CMD_LOGIN =1,
+	CMD_PING = 1000,
+}REQUEST_CMD;
+typedef enum{
+	CMD_LOGIN_STRING = "login",
+	CMD_PING_STRING = "ping",
+}REQUEST_CMD_STR;
+
+#define getcmdstr(cmd) ""
+
 typedef	struct {
 	uint32_t Wns_sign;
 	uint32_t Len;
@@ -130,7 +142,7 @@ typedef	union {
 class client_reserved_info_t {
 	public:
 		std::string qua;
-		std::string cmd;
+		uint32_t cmd;
 		uint32_t seq;
 		int req_size;
 		uint32_t user_ip;
@@ -143,6 +155,9 @@ class client_reserved_info_t {
 		QOSREQUEST qos;
 };
 
+/*
+ * 由框架提供的eup来生成,同时把eup存到自己的成员eup中
+ */
 typedef	struct {
 	DBL_LIST_HEAD_STRUCT(list);
 	struct eservice_unit_t *eup;		/* client eup ,connection info ,for sending out and receiving */
@@ -152,10 +167,10 @@ typedef	struct {
 	uint32_t tsp_seq;
 	int need_not_rsp;
 	
-	struct eservice_buf_t *input_ebp;         /*use for ?*/
+	struct eservice_buf_t *input_ebp;         /*//带有数据包的连接信息,从eup中解出来,eup由框架提供 */
 
 #ifndef	ESERVICE_SINGLE_OUTPUT
-	ss_list_head_struct output_ebp_list;   /*use for ?*/
+	ss_list_head_struct output_ebp_list;   /*回传数据队列*/
 #else
 	struct eservice_buf_t *output_ebp;
 #endif
