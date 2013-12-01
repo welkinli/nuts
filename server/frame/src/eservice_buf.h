@@ -59,6 +59,7 @@ extern int eservice_buf_add_reference(struct eservice_buf_t *ebp, const void *da
 extern int eservice_buf_move_data(struct eservice_buf_t *dst, struct eservice_buf_t *src, ssize_t datalen);
 extern struct eservice_buf_t *eservice_buf_list2buf(struct dbl_list_head *listp);
 extern struct dbl_list_head *eservice_buf_buf2list(struct eservice_buf_t *ebp);
+extern int eservice_buf_copy_data(struct eservice_buf_t *dst,struct eservice_buf_t *src);
 
 #ifdef	__cplusplus
 }

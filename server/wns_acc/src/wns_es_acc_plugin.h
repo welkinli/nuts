@@ -29,6 +29,7 @@
 
 #define	WNS_ACC_MAX_LISTEN_PORT	10
 
+
 #if 1
 /* 1500s timeout */
 //#define	WNS_ACC_DEFAULT_CONN_IDLE_SECONDS	1500
@@ -85,6 +86,9 @@ typedef enum{
 	CMD_PING_STRING = "ping",
 }REQUEST_CMD_STR;
 
+typedef enum{
+	ACC_FLAG_BROADCAST=1;
+}ACC_FLAG;
 #define getcmdstr(cmd) ""
 
 typedef	struct {
@@ -150,6 +154,7 @@ class client_reserved_info_t {
 		int pro_version;
 		int appid;
 		uint32_t uin;
+		uint64_t key;
 		uint32_t server_ip;
 		int protocol;
 		QOSREQUEST qos;
@@ -202,7 +207,7 @@ class wns_acc_connect_user_context_t {
 		std::string device_info;
 		std::vector<char> A2;
 		int datacomed;
-
+		uint64_t uin=0;
         uint32_t proxy_cdnproxy_user_ip;
 };
 
@@ -223,6 +228,7 @@ typedef	struct {
     int other_dest_modid;
     int other_dest_cmd;
     int max_pkg_size;
+    int max_group_user_num;
 } wns_acc_main_config_t;
 
 

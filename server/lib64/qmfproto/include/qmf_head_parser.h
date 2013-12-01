@@ -60,9 +60,9 @@ namespace QMF_PROTOCAL
                 if (reqbufflen < 39) return err_qmf_head_illegal;
 
                 sign_ptr = (uint32_t *)reqbuff;
-                if (*sign_ptr != STX_SIGN_INT) return err_qmf_head_stx;
+                if (*sign_ptr != WNS_SIGN_INT) return err_qmf_head_stx;
                 
-                head.Stx = STX_SIGN_INT;
+                head.Wns_sign = WNS_SIGN_INT;
 
                 uint32_t pos = 4;
                 head.Len = ntohl(*((uint32_t*)(reqbuff + pos)));
@@ -230,6 +230,14 @@ namespace QMF_PROTOCAL
                 head.ClientID   = ntohll(acchead->ClientID);
                 head.AccIp      = ntohl(acchead->AccIp);
                 head.AccPort    = ntohs(acchead->AccPort);
+                head.ClientNum    = ntohs(acchead->ClientNum);
+                for(int i=0;i<head.ClientNum;i++){
+                	head.ClientUinList[i]=ntohl(acchead->ClientUinList[i]);
+                }
+                if(head.ClientNum <=1){
+                	head.ClientUinList[0]=head.Uin;
+                }
+                head.AccPort    = ntohs(acchead->AccPort);
                 head.Flag       = acchead->Flag;
                 if (head.Ver >= 0x02) {
                     head.Ticks  = ntohll(acchead->Ticks);
@@ -246,7 +254,7 @@ namespace QMF_PROTOCAL
             int EncodeQmfAccHead(QMF_PROTOCAL::QmfAccHead &head)
             {
                 head.SOH        = QMF_ACC_HEAD_SOH;
-                head.Ver        = head.Ver;
+               // head.Ver        = head.Ver;
                 head.Seq        = htonl(head.Seq);
                 head.Len        = htonl(head.Len);
                 head.ClientIP   = htonl(head.ClientIP);
@@ -254,7 +262,7 @@ namespace QMF_PROTOCAL
                 head.ClientID   = htonll(head.ClientID);
                 head.AccIp      = htonl(head.AccIp);
                 head.AccPort    = htons(head.AccPort);
-                head.Flag       = head.Flag;
+              //  head.Flag       = head.Flag;
                 head.Ticks      = htonll(head.Ticks);
                 return 0;
             }
@@ -266,18 +274,7 @@ namespace QMF_PROTOCAL
              */
             int GetAccHeadLen(QMF_PROTOCAL::QmfAccHead &head)
             {
-            	if (head.Ver == 1) {
-            	    // ver=1 for default
-        	        //soh+len+ver+seq+ip+port+accid+accip+accport+flag
-	                return 1+4+1+4+4+2+8+4+2+1;
-            	}
-                else if (head.Ver == 2) {
-                    //soh+len+ver+seq+ip+port+accid+accip+accport+flag+ticks
-                    return 1+4+1+4+4+2+8+4+2+1+8;
-                }
-                else {
                     return (int)sizeof(QMF_PROTOCAL::QmfAccHead);
-                }
             }
 
             /**

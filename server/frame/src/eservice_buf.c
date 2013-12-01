@@ -405,6 +405,16 @@ eservice_buf_add_reference(struct eservice_buf_t *ebp, const void *data, size_t 
 	return evbuffer_add_reference(evp, data, datlen, (evbuffer_ref_cleanup_cb)cleanupfn, cleanupfn_arg);
 }
 
+int eservice_buf_copy_data(struct eservice_buf_t *dst,struct eservice_buf_t *src)
+{
+	struct evbuffer *evp_src = NULL,*evp_dst;
+	if(!src || !dst)
+			return -1;
+	evp_src = ESERVICE_ESBUF2EVBUF(src);
+	evp_dst = ESERVICE_ESBUF2EVBUF(dst);
+	return evbuffer_add_buffer_reference(evp_src,evp_dst);
+}
+
 int
 eservice_buf_move_data(struct eservice_buf_t *dst, struct eservice_buf_t *src, ssize_t datalen)
 {

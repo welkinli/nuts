@@ -16,6 +16,8 @@
 #define	WNS_SIGN_STR	"nut\0"
 #define	WNS_SIGN_INT	0x74756e
 
+#define DEFAULT_MAX_GROUP_USER_NUM 16
+
 namespace QMF_PROTOCAL
 {
     using namespace std;
@@ -72,6 +74,7 @@ namespace QMF_PROTOCAL
             uint32_t       Len;//包体总长度
             uint8_t        Ver;//acc版本
             uint32_t       Seq;//序列号
+            uint64_t       Uin;
             uint32_t       ClientIP;//客户端IP
             uint16_t       ClientPort;//端口
             uint64_t       ClientID;//链接ID
@@ -79,7 +82,9 @@ namespace QMF_PROTOCAL
             uint16_t       AccPort;//accport
             /* Flag的最低位保留为acc通知push是否成功，次低位为是否有akamai标志*/
             uint8_t        Flag;//控制位
-
+            uint64_t       GroupID; // TODO ,使用groupid来提单clientIDlist的功能
+            uint16_t       ClientNum;
+            uint32_t		ClientUinList[DEFAULT_MAX_GROUP_USER_NUM];
             /////////////以下为ver2
             uint64_t       Ticks;//时间戳
             
@@ -100,6 +105,8 @@ namespace QMF_PROTOCAL
                 Seq = 0;
                 Flag = 0;
                 Ticks = 0;
+                ClientNum =0;
+                memset(ClientUinList,0,sizeof(ClientUinList));
             }
     };
 #pragma pack()
