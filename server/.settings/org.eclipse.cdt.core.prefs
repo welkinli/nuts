@@ -1,0 +1,6 @@
+eclipse.preferences.version=1
+environment/project/cdt.managedbuild.toolchain.gnu.mingw.base.586616428/LINUX_INCLUDE/delimiter=;
+environment/project/cdt.managedbuild.toolchain.gnu.mingw.base.586616428/LINUX_INCLUDE/operation=append
+environment/project/cdt.managedbuild.toolchain.gnu.mingw.base.586616428/LINUX_INCLUDE/value=C\:\\MinGW\\include_linux\\include
+environment/project/cdt.managedbuild.toolchain.gnu.mingw.base.586616428/append=true
+environment/project/cdt.managedbuild.toolchain.gnu.mingw.base.586616428/appendContributed=true
