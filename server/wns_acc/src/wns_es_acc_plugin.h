@@ -80,6 +80,7 @@
 typedef enum {
 	CMD_LOGIN =1,
 	CMD_PING = 1000,
+	CMD_BROADCAST = 1001,
 }REQUEST_CMD;
 /*
 typedef enum{

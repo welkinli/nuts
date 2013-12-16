@@ -61,6 +61,7 @@
 #define	G_ALOG_LEVEL_MSG	2
 #define	G_ALOG_LEVEL_DBG	3
 
+
 #define g_dbg(arg1, arg2...)	do {if (g_log_level >= G_ALOG_LEVEL_DBG) {GDEBUG_LOG(arg1, ##arg2);}} while (0)
 #define g_msg(arg1, arg2...)		do {if (g_log_level >= G_ALOG_LEVEL_MSG) {GNOTI_LOG(arg1, ##arg2);}} while (0)
 #define g_warn(arg1, arg2...)		do {if (g_log_level >= G_ALOG_LEVEL_WARN) {GERROR_LOG("(%s: %u) "arg1, __FILE__, __LINE__, ##arg2);}} while (0)

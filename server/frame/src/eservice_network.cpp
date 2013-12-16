@@ -1462,7 +1462,7 @@ do_read_data:
 						}
 						
 						after_len = eservice_buf_datalen(es_get_readbuf_from_context(sp));
-
+						g_dbg("res:%d,after_len:%d,tot_len:%d",res,after_len,tot_len);
 						if (res != eservice_cb_data_arrive_ok || after_len == 0 || after_len == tot_len)
 							break;
 					}

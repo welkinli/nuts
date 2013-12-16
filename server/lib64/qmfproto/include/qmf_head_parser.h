@@ -191,7 +191,7 @@ namespace QMF_PROTOCAL
              */
             int GetQmfHeadLen(QMF_PROTOCAL::QmfHead &head)
             {
-            	return 39;
+            	return 37;
             	/*int len = 0;
 				
                 if (head.Ver >= 2)

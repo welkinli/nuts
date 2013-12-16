@@ -31,7 +31,7 @@ typedef CRollLog& (*__Roll_Func)(CRollLog&);
 #define ABORT_LOG(fmt, args...)	   do {DETAIL(CRollLog::ERROR_PRI, fmt, ##args);abort();} while (0)
 
 //#define GDETAIL(lev, fmt, args...)  do {if (!g_albert_logp) {g_albert_logp = CRollLog::instance();} if (!g_albert_logp) {fprintf(stderr, fmt"\n", ##args);} else {g_albert_logp->write_log_module(G_LOG_DOMAIN, lev, fmt, ##args);}} while (0)
-#define GDETAIL(lev, fmt, args...)  do {if (!g_albert_logp) {fprintf(stderr, fmt"\n", ##args);} else {g_albert_logp->write_log_module(G_LOG_DOMAIN, lev, fmt, ##args);}} while (0)
+#define GDETAIL(lev, fmt, args...)  do {if (!g_albert_logp) {fprintf(stderr, fmt"\n", ##args);} else {g_albert_logp->write_log_module(G_LOG_DOMAIN, lev, "[%-10s][%-4d][%-10s]"fmt, __FILE__, __LINE__, __FUNCTION__,##args);}} while (0)
 #define GDEBUG_LOG(fmt, args...)	   GDETAIL(CRollLog::DEBUG_PRI, fmt, ##args)
 #define GNOTI_LOG(fmt, args...)	   GDETAIL(CRollLog::NOTICE_PRI, fmt, ##args)
 #define GERROR_LOG(fmt, args...)	   GDETAIL(CRollLog::ERROR_PRI, fmt, ##args)

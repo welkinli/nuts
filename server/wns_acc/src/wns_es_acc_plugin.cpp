@@ -1612,7 +1612,6 @@ static int wns_connect_to_dispatch_and_send_data(eservice_unit_t *eup,
 	struct timeval to = { 1, 0 };
 	struct eservice_unit_t *dispatch_long_eup = NULL;
 
-#ifndef	USE_IMME_TCP
 	dispatch_long_eup = wns_acc_find_proper_dispatch(tsp);
 	if (!dispatch_long_eup) {
 		g_warn("wns_acc_find_proper_dispatch() failed");
@@ -1632,38 +1631,6 @@ static int wns_connect_to_dispatch_and_send_data(eservice_unit_t *eup,
 				wns_acc_update_failed_L5(qos_dispatch, 1);
 		}
 	}
-
-#else
-	wns_acc_get_L5();
-
-	/* update tsp server info */
-	if (tsp && tsp->client_info_p) {
-		tsp->client_info_p->server_ip = ntohl((uint32_t)(inet_addr(qos_dispatch._host_ip.c_str())));
-	}
-
-	dispatch_eup = eservice_user_register_tcp_imme(NULL, qos_dispatch._host_ip.c_str(), qos_dispatch_port_str, 1000, &to);
-	if (!dispatch_eup) {
-		g_warn("eservice_user_register_tcp_imme() failed");
-		return -1;
-	}
-
-	wns_acc_update_success_L5(dispatch_eup);
-
-	eservice_user_set_tcp_conn_data_arrive_cb(dispatch_eup, dispatch_conn_data_arrive_cb, (void *)dispatch_eup);
-	eservice_user_set_tcp_conn_terminate_cb(dispatch_eup, dispatch_conn_terminate_cb, (void *)dispatch_eup);
-	eservice_user_set_tcp_conn_timeout_cb(dispatch_eup, dispatch_conn_timeout_cb, (void *)dispatch_eup, 1000); /* 1s timeout */
-
-	if (tsp->need_not_rsp == 1) {
-		g_dbg("set close after write, tsp: %p", tsp);
-		eservice_user_set_close(dispatch_eup);
-	}
-
-	/* send_ebp pushed to eup, outer losts it's control */
-	if (send_ebp) {
-		eservice_user_push_outbuf(dispatch_eup, send_ebp);
-	}
-#endif
-
 	return 0;
 }
 
@@ -1831,7 +1798,7 @@ static int wns_acc_process_pkg(eservice_unit_t *eup, wns_acc_task_struct *tsp) {
 	}
 
 	/**************Check Ping Package*********/
-	if (_qmf_head.Cmd == CMD_PING) {
+	if (_qmf_head.Cmd == CMD_BROADCAST) {
 		g_dbg("receive a ping package.");
 
 		if (tsp->protocol_type == 2) {
@@ -1839,18 +1806,28 @@ static int wns_acc_process_pkg(eservice_unit_t *eup, wns_acc_task_struct *tsp) {
 			int snlen = snprintf(http_length_buffer,
 					sizeof(http_length_buffer) - 1, "%zd\r\n\r\n",
 					eservice_buf_datalen(tsp->input_ebp));
+
 			eservice_buf_prepend(tsp->input_ebp, http_length_buffer, snlen);
 			eservice_buf_prepend(tsp->input_ebp, http_fake_header,
 					http_fake_header_len);
 		}
 		// 如果是oc点加速过来的,需要加上相应的头
 		//if (tsp->client_port != 0) prepend_proxy_header(tsp, tsp->input_ebp);
+		tsp->need_not_rsp = 1;
+		send_ebp = eservice_buf_new(0);
+		eservice_buf_move_data(send_ebp,tsp->input_ebp,-1);
+		char msg[1024]="test broadcast!";
+		eservice_buf_add(send_ebp,msg,strlen(msg));
 
-		ss_list_push_head_struct(&(tsp->output_ebp_list),
-				eservice_buf_buf2list(tsp->input_ebp));
+		eservice_user_push_outbuf(eup, send_ebp);
+
 		tsp->input_ebp = NULL;
 
 		return 0;
+	}
+	if(_qmf_head.Cmd == 1003){
+		//群发广播
+
 	}
 
 	if (_qmf_head.BodyLen == 0) {
@@ -2449,6 +2426,7 @@ extern "C" eservice_callback_return_val eservice_cb_data_arrive(
 			}
 
 			if (buf_data_len < pkg_len) {
+				//包没收全，设置还需要补足的长度继续收!
 				eservice_user_next_need(eup, pkg_len - buf_data_len);
 				return eservice_cb_data_arrive_not_enough;
 			}
